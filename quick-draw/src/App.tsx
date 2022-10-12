@@ -3,6 +3,7 @@ import logo from './logo.svg';
 import './App.css';
 
 function App () {
+  
   const [playerInfo, setPlayerInfo] = useState({
     playerRedTime: 0,
     playerBlueTime: 0,
@@ -17,9 +18,9 @@ function App () {
     finished: false,
   });
 
-  const handleUserKeyPress = (event: KeyboardEvent) => {
+  const handleUserKeyPress = (event: KeyboardEvent) => { //основной функционал  
     
-    if (event.key === 'Shift') {
+    if (event.key === 'Shift' && playerInfo.playerRedTime === 0) { //по нажатию шифта записываем время, если оно еще не было записано. Если второй игрок еще ничего не сделал, то записываем в победители
       console.log('RED fires!', Date.now());
       setPlayerInfo(prev => ({
         ...prev,
@@ -39,7 +40,7 @@ function App () {
       }
     }
 
-    if (event.key === 'Enter') {
+    if (event.key === 'Enter' && playerInfo.playerBlueTime === 0 ) { //по нажатию энтера записываем время, если оно еще не было записано. Если первый игрок еще ничего не сделал, то записываем в победители
       console.log('BLUE fires!', Date.now());
       setPlayerInfo(prev => ({
         ...prev,
@@ -59,7 +60,7 @@ function App () {
       }
     }
 
-    if (playerInfo.playerRedTime != 0 && playerInfo.playerBlueTime != 0) {
+    if (playerInfo.playerRedTime !== 0 && playerInfo.playerBlueTime !== 0) { //если оба нажали свои кнопки, завершаем игру
       setWin(prev => ({
         ...prev,
         finished: true
@@ -68,7 +69,8 @@ function App () {
 
   };
 
-  useEffect(() => {
+  useEffect(() => { //вешаем листенеры на жту хрень. Убираем их чтобы не дублировались. Часть элементов будут обновляться, поэтому я не добавляю депенденси эррей
+
     window.addEventListener('keydown', handleUserKeyPress);
     return () => {
       window.removeEventListener('keydown', handleUserKeyPress);
@@ -80,7 +82,7 @@ function App () {
           <h1>{win.winner ? `${win.winner} wins` : 'welcome to the showdown'}</h1>
           {win.finished &&
           <h2>
-            Time difference is: {Math.abs(playerInfo.playerRedTime - playerInfo.playerBlueTime)}
+            Time difference is: {Math.abs(playerInfo.playerRedTime - playerInfo.playerBlueTime)/1000 + ' seconds'} <br /> Refresh to restart
           </h2>} 
           <div className='areas-container'>
             <div className='p1-area' style={{backgroundColor: playerInfo.playerRedArea}}><p>RED player</p><br /><p>Press `SHIFT` to fire first!</p></div>
